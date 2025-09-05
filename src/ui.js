@@ -75,19 +75,19 @@ function createOptionsPanel() {
 
   elmContainer.addEventListener(
     'focus',
-    () => console.info('Options panel focused!'),
+    () => console.debug('Options panel focused!'),
     true
   );
   elmContainer.addEventListener(
     'blur',
-    () => console.info('Options panel blurred!'),
+    () => console.debug('Options panel blurred!'),
     true
   );
 
   elmContainer.addEventListener(
     'keydown',
     (evt) => {
-      console.info('Options panel key event:', evt.type, evt.charCode);
+      console.debug('Options panel key event:', evt.type, evt.charCode);
 
       if (getKeyColor(evt.charCode) === 'green') {
         return;
@@ -128,6 +128,8 @@ function createOptionsPanel() {
   elmContainer.appendChild(createConfigCheckbox('hideLogo'));
   elmContainer.appendChild(createConfigCheckbox('showWatch'));
   elmContainer.appendChild(createConfigCheckbox('removeShorts'));
+  elmContainer.appendChild(createConfigCheckbox('forceHighResVideo'));
+  elmContainer.appendChild(createConfigCheckbox('removeEndscreen'));
   elmContainer.appendChild(createConfigCheckbox('enableSponsorBlock'));
 
   const elmBlock = document.createElement('blockquote');
@@ -144,7 +146,7 @@ function createOptionsPanel() {
 
   const elmSponsorLink = document.createElement('div');
   elmSponsorLink.innerHTML =
-    '<small>Sponsor segments skipping - https://sponsor.ajay.app</small>';
+    '<small class="ytaf-ui-sponsor">Sponsor segments skipping - https://sponsor.ajay.app</small>';
   elmContainer.appendChild(elmSponsorLink);
 
   return elmContainer;
@@ -163,12 +165,12 @@ function showOptionsPanel(visible) {
   visible ??= true;
 
   if (visible && !optionsPanelVisible) {
-    console.info('Showing and focusing options panel!');
+    console.debug('Showing and focusing options panel!');
     optionsPanel.style.display = 'block';
     optionsPanel.focus();
     optionsPanelVisible = true;
   } else if (!visible && optionsPanelVisible) {
-    console.info('Hiding options panel!');
+    console.debug('Hiding options panel!');
     optionsPanel.style.display = 'none';
     optionsPanel.blur();
     optionsPanelVisible = false;
@@ -178,7 +180,7 @@ function showOptionsPanel(visible) {
 window.ytaf_showOptionsPanel = showOptionsPanel;
 
 const eventHandler = (evt) => {
-  console.info(
+  console.debug(
     'Key event:',
     evt.type,
     evt.charCode,
@@ -187,7 +189,7 @@ const eventHandler = (evt) => {
   );
 
   if (getKeyColor(evt.charCode) === 'green') {
-    console.info('Taking over!');
+    console.debug('Taking over!');
 
     evt.preventDefault();
     evt.stopPropagation();
@@ -207,7 +209,7 @@ document.addEventListener('keyup', eventHandler, true);
 
 export function showNotification(text, time = 3000) {
   if (!document.querySelector('.ytaf-notification-container')) {
-    console.info('Adding notification container');
+    console.debug('Adding notification container');
     const c = document.createElement('div');
     c.classList.add('ytaf-notification-container');
     document.body.appendChild(c);

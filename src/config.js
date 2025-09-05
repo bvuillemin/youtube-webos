@@ -55,6 +55,20 @@ const configOptions = new Map([
       default: false,
       desc: 'Display time in UI'
     }
+  ],
+  [
+    'forceHighResVideo',
+    {
+      default: false,
+      desc: 'Force max resolution video playback'
+    }
+  ],
+  [
+    'removeEndscreen',
+    {
+      default: false,
+      desc: 'Remove end screens from video'
+    }
   ]
 ]);
 

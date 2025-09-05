@@ -1,18 +1,20 @@
 import CopyPlugin from 'copy-webpack-plugin';
+import { TransformAsyncModulesPlugin } from 'transform-async-modules-webpack-plugin';
+import pkgJson from './package.json' with { type: 'json' };
 
-/** @type {(env: Record<string, string>) => (import('webpack').Configuration)[]} */
-const makeConfig = () => [
+/** @type {(env: Record<string, string>, argv: { mode?: string }) => (import('webpack').Configuration)[]} */
+const makeConfig = (_env, argv) => [
   {
     /**
      * NOTE: Builds with devtool = 'eval' contain very big eval chunks which seem
      * to cause segfaults (at least) on nodeJS v0.12.2 used on webOS 3.x.
      */
-    devtool: 'source-map',
+    devtool: argv.mode === 'development' ? 'inline-source-map' : 'source-map',
 
     entry: {
       index: './src/index.js',
       userScript: {
-        import: './src/userScript.js',
+        import: './src/userScript',
         filename: 'webOSUserScripts/[name].js'
       }
     },
@@ -62,6 +64,15 @@ const makeConfig = () => [
           { context: 'assets', from: '**/*' },
           { context: 'src', from: 'index.html' }
         ]
+      }),
+      // babel doesn't transform top-level await.
+      // webpack transforms it to async modules.
+      // This plugin calls babel again to transform remove the `async` keyword usage after the fact.
+      new TransformAsyncModulesPlugin({
+        // @ts-expect-error Bad types
+        runtime: {
+          version: pkgJson.devDependencies['@babel/plugin-transform-runtime']
+        }
       })
     ]
   }
